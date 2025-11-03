@@ -15,7 +15,7 @@ export const addProduct = async (req, res) => {
     
     const product = await Product.create({
       name,
-      createdBy, 
+      createdBy,  
     });
 
     return res.json({

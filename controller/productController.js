@@ -1,10 +1,9 @@
-import Product from "../model/Product.js"; 
+import Product from "../model/Product.js";
 
 export const addProduct = async (req, res) => {
   try {
     const { name, createdBy } = req.body;
 
-    
     if (!name || !createdBy) {
       return res.json({
         success: false,
@@ -12,10 +11,9 @@ export const addProduct = async (req, res) => {
       });
     }
 
-    
     const product = await Product.create({
       name,
-      createdBy,  
+      createdBy,
     });
 
     return res.json({
@@ -31,17 +29,11 @@ export const addProduct = async (req, res) => {
   }
 };
 
-
-
-
 export const getAllProducts = async (req, res) => {
   try {
-     
     const products = await Product.find()
-      .populate("createdBy", "name email") 
-      .sort({ createdAt: -1 });
-
-    
+      .populate("createdBy", "name email")
+      .sort({createdAt:-1})
     if (!products || products.length === 0) {
       return res.json({
         success: false,

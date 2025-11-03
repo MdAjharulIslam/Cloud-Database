@@ -7,7 +7,7 @@ import productRoute from "./routes/productRoute.js";
 
 const app = express();
 
-const PORT  = 4000;
+const PORT  = process.env.PORT || 3000;
 await connectDB()
 
 app.use(express.json())

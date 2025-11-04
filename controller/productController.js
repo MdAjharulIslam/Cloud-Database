@@ -29,11 +29,37 @@ export const addProduct = async (req, res) => {
   }
 };
 
+export const getSingleProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const product = await Product.findById(id).populate(
+      "createdBy",
+      "-password"
+    );
+    if (!product) {
+      return res.json({
+        success: false,
+        message: "Product Not found",
+      });
+    }
+
+    return res.json({
+      success: true,
+      product,
+    });
+  } catch (error) {
+    return res.json({
+      success: false,
+      message: "internal server error",
+    });
+  }
+};
+
 export const getAllProducts = async (req, res) => {
   try {
     const products = await Product.find()
       .populate("createdBy", "name email")
-      .sort({createdAt:-1})
+      .sort({ createdAt: -1 });
     if (!products || products.length === 0) {
       return res.json({
         success: false,

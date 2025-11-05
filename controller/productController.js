@@ -1,5 +1,4 @@
 import Product from "../model/Product.js";
-import fs from "fs";
 
 export const addProduct = async (req, res) => {
   try {

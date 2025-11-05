@@ -1,21 +1,22 @@
 import Product from "../model/Product.js";
+import fs from "fs";
 
 export const addProduct = async (req, res) => {
   try {
-    const { name,price, createdBy,available } = req.body;
+    const { name, price, available } = req.body;
 
-    if (!name || !createdBy ) {
+    if (!name || !price) {
       return res.json({
         success: false,
         message: "All fields are required",
       });
     }
-
+    const userId = req.auth._id;
     const product = await Product.create({
       name,
       price,
-      createdBy,
-      available
+      createdBy: userId,
+      available,
     });
 
     return res.json({
@@ -59,7 +60,7 @@ export const getSingleProduct = async (req, res) => {
 
 export const getAllProducts = async (req, res) => {
   try {
-    const products = await Product.find({available:true})
+    const products = await Product.find({ available: true })
       .populate("createdBy", "name email")
       .sort({ createdAt: -1 });
     if (!products || products.length === 0) {
@@ -83,30 +84,28 @@ export const getAllProducts = async (req, res) => {
   }
 };
 
-export const toogleProduct = async(req , res)=>{
+export const toogleProduct = async (req, res) => {
   try {
-    const {id} = req.params;
+    const { id } = req.params;
 
     const product = await Product.findById(id);
-    if(!product){
+    if (!product) {
       return res.json({
-        success:false,
-        message:"product not found"
-      })
+        success: false,
+        message: "product not found",
+      });
     }
-     product.available = !product.available
-    
-     await product.save();
-     return res.json({
-      success:true,
-      message:"Stock update successfully",
-      
-     })
+    product.available = !product.available;
 
+    await product.save();
+    return res.json({
+      success: true,
+      message: "Stock update successfully",
+    });
   } catch (error) {
     return res.json({
-      success:false,
-      message:"Internal server error"
-    })
+      success: false,
+      message: "Internal server error",
+    });
   }
-}
+};

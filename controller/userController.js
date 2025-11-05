@@ -1,11 +1,9 @@
-
 import express from "express";
 import User from "../model/User.js";
-
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
- export const register = async (req, res) => {
+export const register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
@@ -54,60 +52,61 @@ import jwt from "jsonwebtoken";
   }
 };
 
-
-export const login = async(req, res)=>{
+export const login = async (req, res) => {
   try {
-    const {email,password} = req.body;
+    const { email, password } = req.body;
 
-    if(!email || !password){
+    if (!email || !password) {
       return res.json({
-        success:false,
-        message:"all field are required"
-      })
+        success: false,
+        message: "all field are required",
+      });
     }
-    const existingUser = await User.findOne({email});
-    if(!existingUser){
+    const existingUser = await User.findOne({ email });
+    if (!existingUser) {
       return res.json({
-        success:false,
-        message:"user not found"
-      })
+        success: false,
+        message: "user not found",
+      });
     }
-    const verifyPass = await bcrypt.compare(password, existingUser.password)
-    if(!verifyPass){
+    const verifyPass = await bcrypt.compare(password, existingUser.password);
+    if (!verifyPass) {
       return res.json({
-        success:false,
-        message:"invalid password"
-      })
+        success: false,
+        message: "invalid password",
+      });
     }
-    const token = await jwt.sign({id:existingUser._id}, process.env.JWT_SECRET,{expiresIn:"7d"})
+    const token = await jwt.sign(
+      { id: existingUser._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
     return res.json({
-      success:true,
-      message:"login successfully done",
-      token
-    })
-    
+      success: true,
+      message: "login successfully done",
+      token,
+    });
   } catch (error) {
-     console.error(error.message);
+    console.error(error.message);
     return res.status(400).json({
       success: false,
       message: "Internal server ",
     });
   }
-}
+};
 
-export const getAllUser = async(req, res)=>{
+export const getAllUser = async (req, res) => {
   try {
-    const allUsers = await User.find().sort({createdAt:-1});
+    const allUsers = await User.find().sort({ createdAt: -1 });
     return res.json({
-      success:true,
-     allUsers
-    })
-    
+      success: true,
+      allUsers,
+    });
   } catch (error) {
-     console.error(error.message);
+    console.error(error.message);
     return res.status(400).json({
       success: false,
       message: "Internal server error",
     });
   }
-}
+};

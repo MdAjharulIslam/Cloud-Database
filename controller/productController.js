@@ -2,9 +2,9 @@ import Product from "../model/Product.js";
 
 export const addProduct = async (req, res) => {
   try {
-    const { name,price, createdBy } = req.body;
+    const { name,price, createdBy,available } = req.body;
 
-    if (!name || !createdBy) {
+    if (!name || !createdBy ) {
       return res.json({
         success: false,
         message: "All fields are required",
@@ -15,6 +15,7 @@ export const addProduct = async (req, res) => {
       name,
       price,
       createdBy,
+      available
     });
 
     return res.json({
@@ -58,7 +59,7 @@ export const getSingleProduct = async (req, res) => {
 
 export const getAllProducts = async (req, res) => {
   try {
-    const products = await Product.find()
+    const products = await Product.find({available:true})
       .populate("createdBy", "name email")
       .sort({ createdAt: -1 });
     if (!products || products.length === 0) {
@@ -81,3 +82,31 @@ export const getAllProducts = async (req, res) => {
     });
   }
 };
+
+export const toogleProduct = async(req , res)=>{
+  try {
+    const {id} = req.params;
+
+    const product = await Product.findById(id);
+    if(!product){
+      return res.json({
+        success:false,
+        message:"product not found"
+      })
+    }
+     product.available = !product.available
+    
+     await product.save();
+     return res.json({
+      success:true,
+      message:"Stock update successfully",
+      
+     })
+
+  } catch (error) {
+    return res.json({
+      success:false,
+      message:"Internal server error"
+    })
+  }
+}

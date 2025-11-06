@@ -37,6 +37,7 @@ export const getSingleProduct = async (req, res) => {
     const product = await Product.findById(id).populate(
       "createdBy",
       "-password"
+      
     );
     if (!product) {
       return res.json({
